@@ -1,0 +1,88 @@
+test = "a"
+
+pokad test == "a":
+    vypravaj("Test je 'a'!")
+
+# Vytvoříme funkci pro provedení matematických výpočtů
+def spocitaj(a, b):
+    scitani = a + b
+    odcitani = a - b
+    nasobeni = a * b
+    deleni = 0
+    pokad b != 0:
+        deleni = a / b
+    jinak:
+        vypravaj("Dělení nulou není možné!")
+    
+    vrati scitani, odcitani, nasobeni, deleni
+
+# Vypočteme několik hodnot
+x = 10
+y = 5
+scitani, odcitani, nasobeni, deleni = spocitaj(x, y)
+
+# Zobrazíme výsledky
+vypravaj("Výsledky pro x = " + počítaj(x) + " a y = " + počítaj(y))
+vypravaj("Sčítání: " + počítaj(scitani))
+vypravaj("Odčítání: " + počítaj(odcitani))
+vypravaj("Násobení: " + počítaj(nasobeni))
+vypravaj("Dělení: " + počítaj(deleni))
+
+# Podmínky na kontrolu zadaných čísel
+pokad x > y:
+    vypravaj("x je větší než y")
+pokad x < y:
+    vypravaj("x je menší než y")
+jinak:
+    vypravaj("x je rovno y")
+
+# Smyčka pro sečítání čísel
+vypravaj("Sečítání čísel od 1 do 10:")
+soucet = 0
+for i in rozsah(1, 11):
+    soucet = soucet + i
+    vypravaj("Součet až do " + počítaj(i) + " je: " + počítaj(soucet))
+
+# Funkce pro kontrolu, jestli je číslo prvočíslo
+def je_prvocislo(cislo):
+    pokad cislo < 2:
+        vrati False
+    for i in rozsah(2, cislo):
+        pokad cislo % i == 0:
+            vrati False
+    vrati True
+
+# Zjišťujeme, zda je číslo prvočíslem
+cislo = 29
+pokad je_prvocislo(cislo):
+    vypravaj(pořítaj(cislo) + " je prvočíslo.")
+jinak:
+    vypravaj(pořítaj(cislo) + " není prvočíslo.")
+
+# Pokročilý výpočet faktoriálu
+def faktorial(n):
+    fakt = 1
+    for i in rozsah(1, n + 1):
+        fakt = fakt * i
+    vrati fakt
+
+# Vypočteme faktoriál pro 5
+fakt5 = faktorial(5)
+vypravaj("Faktoriál 5 je: " + počítaj(fakt5))
+
+# Rozdělíme text na slova a provedeme opakovanou operaci
+text = "Tento text bude rozdělen na slova"
+slova = text.split(" ")
+
+vypravaj("Slova v textu:")
+for slovo in slova:
+    vypravaj(slovo)
+
+# Používáme složené podmínky
+x = 10
+y = 20
+pokad x > 5 a y < 30:
+    vypravaj("x je větší než 5 a y je menší než 30")
+
+# Závěr programu
+vypravaj("Program byl úspěšně dokončen!")
