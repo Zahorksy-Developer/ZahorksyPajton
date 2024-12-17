@@ -83,13 +83,13 @@ print("Pocet prvkov v liste je: " + pocitaj_pocet)
 #### Command to Run (using Python interpreter):
 
 ```bash
-python pajton_interpreter.py example.pajton
+python main.py example.pajton
 ```
 
 #### Command to Run (using Go program):
 
 ```bash
-go run main.go example.pajton
+pajton example.pajton
 ```
 
 ---
