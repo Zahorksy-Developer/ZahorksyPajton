@@ -1,13 +1,14 @@
+
 # Pajton - A Custom Python-like Language
 
-**Pajton** is a meme language created as a fun variation of Python, inspired by the "Zahorská" (Slovak) dialect. It is not intended for serious use, but rather as a humorous take on Python's syntax, making the language more playful and entertaining.
+**Pajton** is a meme language based on Python, created as a fun variation inspired by the "Zahorská" (Slovak) dialect. The language uses a humorous twist on Python's syntax to make coding more playful.
+
+This repository contains both a Python interpreter and a Go program to run `.pajton` files. Choose either to execute your Pajton files based on your preference for Python or Go.
 
 ### Features:
-- Translates specific words from Slovak (Zahorská) dialect to Python syntax.
-- Allows users to run `.pajton` files, which are interpreted as regular Python code after translation.
-
-### How it works:
-The interpreter reads the `.pajton` file, replaces specific keywords with the corresponding Python commands, and then executes the translated Python code.
+- Translates specific words from the Zahorská dialect to Python syntax.
+- Allows users to run `.pajton` files using either Python or Go.
+- The Go program executes the Python interpreter internally, making it easy for users who prefer Go.
 
 ### Common Translations:
 - **vypravaj** → `print`
@@ -25,29 +26,37 @@ The interpreter reads the `.pajton` file, replaces specific keywords with the co
 ## Installation
 
 1. Clone or download the repository.
-2. Ensure you have Python 3.x installed on your machine.
-3. Save the interpreter script (`pajton_interpreter.py`) in the same directory as your `.pajton` files.
-4. You can then run the `.pajton` files through the interpreter.
+2. Ensure you have Python 3.x installed on your machine (for the Python interpreter).
+3. Make sure you have Go installed (for the Go interpreter).
+4. Save the `main.py` file (for Python) and the `main.go` file (for Go) in the same directory as your `.pajton` files.
 
 ---
 
 ## How to Use
 
-1. Write your code in `.pajton` files using the custom syntax.
-2. To execute a `.pajton` file, run the interpreter using the command line.
+You have two options for running `.pajton` files: using the **Python interpreter** or the **Go program**.
 
-### Command-line Usage:
-```
-python pajton_interpreter.py <filename.pajton>
-```
+### 1. Using the Python Interpreter:
+1. Write your code in a `.pajton` file.
+2. To execute it with the Python interpreter, run the following command:
 
-Where `<filename.pajton>` is the name of the `.pajton` file you want to run. The file must be located in the same directory as the interpreter script.
+   ```bash
+   python main.py <filename.pajton>
+   ```
 
----
+### 2. Using the Go Program:
+1. Write your code in a `.pajton` file.
+2. To execute it with the Go program, run the following command:
 
-## Example
+   ```bash
+   pajton <filename.pajton> 
+   ```
 
-### `.pajton` File:
+Where `<filename.pajton>` is the name of the `.pajton` file you want to run.
+
+### Example:
+
+#### `.pajton` File:
 
 ```pajton
 more pozdrav():
@@ -59,7 +68,7 @@ pocitaj_pocet = dlzka([1, 2, 3, 4])
 vypravaj("Pocet prvkov v liste je: " + pocitaj_pocet)
 ```
 
-### Translated Python Code:
+#### Translated Python Code:
 
 ```python
 def pozdrav():
@@ -71,96 +80,112 @@ pocitaj_pocet = len([1, 2, 3, 4])
 print("Pocet prvkov v liste je: " + pocitaj_pocet)
 ```
 
-### Command to Run:
+#### Command to Run (using Python interpreter):
+
 ```bash
 python pajton_interpreter.py example.pajton
+```
+
+#### Command to Run (using Go program):
+
+```bash
+go run main.go example.pajton
 ```
 
 ---
 
 ## Code Walkthrough
 
-The interpreter script (`pajton_interpreter.py`) includes the following key components:
+### 1. Python Interpreter (`pajton_interpreter.py`)
 
-### 1. **preloz_pajton_kod(kod)**
+This script is responsible for translating `.pajton` files to Python code and executing them.
 
-This function translates the custom `.pajton` code to standard Python syntax. It uses `str.replace()` to swap keywords like `vypravaj` with `print`, and `pokad` with `if`.
+- **`preloz_pajton_kod(kod)`**: This function performs the translation from `.pajton` to Python by replacing specific keywords with Python equivalents.
+- **`spust_pajton_soubor(soubor)`**: This function reads the `.pajton` file, translates it, and executes the resulting Python code.
+- **`main()`**: Sets up argument parsing and handles the file execution process.
 
-### 2. **spust_pajton_soubor(soubor)**
+### 2. Go Program (`main.go`)
 
-This function opens and reads the `.pajton` file, then processes the code through the `preloz_pajton_kod()` function. It attempts to execute the translated Python code, handling file errors and syntax issues.
+The Go program runs the Python interpreter internally to execute `.pajton` files. Here’s how it works:
 
-### 3. **main()**
+- **`os.Args[1]`**: This fetches the `.pajton` filename passed as a command-line argument.
+- **`os.Executable()`**: It finds the path to the Go executable and uses it to determine where the program is located.
+- **`exec.Command("python", pythonScript, pajtonFile)`**: This runs the Python script (`main.py`) with the `.pajton` file as a parameter.
 
-This function sets up command-line argument parsing with `argparse`, which allows users to specify the filename of the `.pajton` code they want to run. It uses the `spust_pajton_soubor()` function to execute the file.
+#### Go Program Breakdown:
 
----
+```go
+package main
 
-## Example Script Breakdown
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+)
 
-Here’s the Python code for the interpreter:
+func main() {
+	// Check if the user provided arguments
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: pajton <filename.pajton>")
+		os.Exit(1)
+	}
 
-```python
-import argparse
-import os
-import sys
+	// Get the filename of the .pajton file
+	soubor := os.Args[1]
 
-def preloz_pajton_kod(kod):
-    # Převody záhorské syntaxe na Python
-    kod = kod.replace("vypravaj", "print")
-    kod = kod.replace("pocitaj(", "(")
-    kod = kod.replace("dlzka", "len")
-    kod = kod.replace("pokad", "if")
-    kod = kod.replace("je", "==")
-    kod = kod.replace("jinak:", "else:")
-    kod = kod.replace("jinak", "else")
-    kod = kod.replace("more", "def")
-    kod = kod.replace("vrati", "return")
-    return kod
+	// Get the path of the Go program (executable)
+	exePath, err := os.Executable()
+	if err != nil {
+		fmt.Printf("Error getting executable path: %v\n", err)
+		os.Exit(1)
+	}
+	basePath := filepath.Dir(exePath)
 
-def spust_pajton_soubor(soubor):
-    try:
-        with open(soubor, "r", encoding="utf-8") as f:
-            pajton_kod = f.read()
-        python_kod = preloz_pajton_kod(pajton_kod)
-        exec(python_kod)
-    except FileNotFoundError:
-        print(f"Soubor {soubor} nebyl nalezen.")
-    except SyntaxError as e:
-        print(f"Chyba v syntaxi kódu: {e}")
-    except Exception as e:
-        print(f"Chyba při spuštění souboru: {e}")
+	// Define paths for the Python script and the .pajton file
+	pythonScript := filepath.Join("C:/pajton/main.py")
+	pajtonFile := filepath.Join(basePath, soubor)
 
-def main():
-    # Zjistíme cestu ke spuštěnému programu
-    base_path = os.path.dirname(os.path.abspath(sys.argv[0]))
+	// Check if Python script exists
+	if _, err := os.Stat(pythonScript); os.IsNotExist(err) {
+		fmt.Printf("Python script not found: %s\n", pythonScript)
+		os.Exit(1)
+	}
 
-    # Nastavení argumentů pro soubor
-    parser = argparse.ArgumentParser(description="Interpreter pro soubory .pajton.")
-    parser.add_argument(
-        "soubor",
-        help="Název souboru .pajton, který chcete spustit (musí být ve stejné složce jako tento program)",
-    )
-    args = parser.parse_args()
+	// Check if the .pajton file exists
+	if _, err := os.Stat(pajtonFile); os.IsNotExist(err) {
+		fmt.Printf("File .pajton not found: %s\n", pajtonFile)
+		os.Exit(1)
+	}
 
-    # Spojíme základní cestu s názvem souboru
-    soubor_path = os.path.join(base_path, args.soubor)
+	// Run the Python script with the .pajton file as argument
+	cmd := exec.Command("python", pythonScript, pajtonFile)
+	cmd.Stdout = os.Stdout // Redirect stdout
+	cmd.Stderr = os.Stderr // Redirect stderr
 
-    # Spustíme soubor
-    spust_pajton_soubor(soubor_path)
-
-if __name__ == "__main__":
-    main()
+	// Run the command
+	err = cmd.Run()
+	if err != nil {
+		fmt.Printf("Error running Python script: %v\n", err)
+		os.Exit(1)
+	}
+}
 ```
+
+### Key Steps:
+1. **Argument Parsing**: The program expects the user to provide a `.pajton` file as an argument.
+2. **Path Calculation**: It calculates the paths for both the Python interpreter and the `.pajton` file.
+3. **File Existence Checks**: The Go program checks if both the Python script and the `.pajton` file exist.
+4. **Command Execution**: The Python script is executed via the `exec` package with the `.pajton` file as its argument.
 
 ---
 
 ## Limitations and Notes
 
-- **Syntax**: The current version of Pajton only supports basic translations for some common Python keywords. More complex features of Python are not yet supported.
-- **Performance**: Pajton code is first translated to Python, and then executed. This introduces an overhead compared to directly running Python code.
-- **Humor**: Pajton is a meme and not intended for serious projects. It should be used for fun and as an educational tool to explore how interpreters and compilers work.
+- **Syntax Support**: Currently, the Pajton interpreter supports a limited subset of Python features and only translates basic keywords.
+- **Performance**: Running `.pajton` files requires an extra step of translation to Python, which may introduce slight performance overhead.
+- **Humor**: Pajton is a meme language, not intended for serious production use. It’s a fun way to explore language translation and create humorous code.
 
 ---
 
-Enjoy coding in Pajton! If you encounter any issues or would like to add more features, feel free to contribute or send feedback.
+Enjoy coding in Pajton! Feel free to contribute and improve this language further.
