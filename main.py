@@ -11,7 +11,7 @@ def preloz_pajton_kod(kod):
     kod = kod.replace("je", "==")
     kod = kod.replace("jinak:", "else:")
     kod = kod.replace("jinak", "else")
-    kod = kod.replace("def", "def")
+    kod = kod.replace("more", "def")
     kod = kod.replace("vrati", "return")
     return kod
 
